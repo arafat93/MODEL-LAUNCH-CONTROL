@@ -13,9 +13,9 @@
      these script elements near the bottom of the page. This is what
      actually cuts the "Connecting…" delay — the scripts still execute in
      the same order, just further along in the download queue already. -->
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js">
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js">
-<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js">
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js" crossorigin>
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js" crossorigin>
+<link rel="preload" as="script" href="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js" crossorigin>
 <link rel="preload" as="script" href="config.js">
 <style>
 /* ── THEME VARIABLES ── */
@@ -1228,9 +1228,14 @@ let deletedModelsSet=new Set();
 // ── AUTH STATE OBSERVER ───────────────────────────────────────────────────────
 auth.onAuthStateChanged(async(user)=>{
   if(user){
-    // Show loading while fetching data
-    showLoading();
+    // Don't show the full-screen "Connecting…" overlay again here — the
+    // person just came from the login form and is expecting the dashboard,
+    // not a second loading screen. Reveal the dashboard shell right away;
+    // loadFromFirestore() below is cache-first and usually resolves fast,
+    // and renderAll() will just re-render in place once data lands.
+    hideLoading();
     hideAuthGate();
+    document.querySelector('.wrap').classList.add('unlocked');
 
     // Update header user info
     const avatar=document.getElementById('userAvatar');
@@ -1242,17 +1247,15 @@ auth.onAuthStateChanged(async(user)=>{
     badge.style.display='flex';
     logoutBtn.style.display='';
 
-    // Load user's data from Firestore
+    // Load user's data from Firestore (cache-first; see loadFromFirestore)
     const saved=await loadFromFirestore(user.uid);
     deletedModelsSet=new Set(saved?.deletedModels||[]);
     ({tasks: state, deadlines}=loadState(saved));
-refreshModelsList();
+    refreshModelsList();
     if (!activeTab && models.length > 0) activeTab = models[0];
-    document.querySelector('.wrap').classList.add('unlocked');
     document.getElementById('lastUpdated').textContent=formatLastUpdated(saved&&saved.updatedAt)||'';
     listenForLastUpdated(user.uid);
     renderAll();
-    hideLoading();
     if(typeof refreshStickyBarOrigin==='function') setTimeout(refreshStickyBarOrigin,100);
   } else {
     // Signed out
