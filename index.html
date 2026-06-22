@@ -3509,6 +3509,18 @@ if(window.__firebaseLoadFailed || typeof firebase==='undefined'){
 const footerYearEl=document.getElementById('footerYear');
 if(footerYearEl) footerYearEl.textContent=new Date().getFullYear();
 
+// ── AUTO LOGIN PROMPT ─────────────────────────────────────────────────────────
+// If someone is still browsing in local preview mode (i.e. not signed in)
+// 10 seconds after load, surface the existing login modal so they're nudged
+// to sign in rather than silently using the unauthenticated seed-data view.
+setTimeout(()=>{
+  const gate=document.getElementById('authGate');
+  const alreadyOpen=gate && !gate.classList.contains('hidden');
+  if(previewMode && !alreadyOpen){
+    showAuthGate();
+  }
+},10000);
+
 
 captureStickyBarOrigin();
 updateStickyBarPin();
