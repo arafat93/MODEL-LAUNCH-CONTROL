@@ -232,7 +232,6 @@ footer {
 .footer-status { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); font-weight: 500; }
 .footer-status .live-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; flex-shrink: 0; }
 .footer-status strong { color: var(--green); font-weight: 600; }
-.footer-synced { font-size: 11px; color: var(--text-muted); font-weight: 300; }
 @media (max-width: 700px) {
   footer { flex-direction: column; align-items: flex-start; text-align: left; }
   .footer-mid { order: 3; }
@@ -990,24 +989,17 @@ footer {
 
 /* ── BACK TO TOP ── */
 .back-to-top {
-  position: fixed; bottom: 56px; right: 32px;
-  width: 46px; height: 46px;
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px 6px 10px;
   background: var(--surface); border: 1px solid var(--border);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; z-index: 300;
-  box-shadow: var(--shadow-md);
-  opacity: 0; visibility: hidden; transform: translateY(16px) scale(0.9);
-  transition: opacity 0.35s ease, visibility 0.35s ease, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, background 0.25s ease;
+  border-radius: 100px;
+  cursor: pointer; flex-shrink: 0;
+  font-family: inherit; font-size: 11px; font-weight: 500; color: var(--text-muted);
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease, transform 0.2s ease;
 }
-.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-.back-to-top:hover { border-color: var(--accent1); background: var(--accent1-dim); box-shadow: 0 12px 32px -8px rgba(212, 175, 55, 0.3); }
-.back-to-top:active { transform: scale(0.92); }
-.back-to-top svg { stroke: var(--accent1); transition: transform 0.25s ease; }
-.back-to-top:hover svg { transform: translateY(-2px); }
-@media (max-width: 640px) {
-  .back-to-top { bottom: 50px; right: 20px; width: 42px; height: 42px; }
-}
+.back-to-top:hover { border-color: var(--accent1); background: var(--accent1-dim); color: var(--accent1); transform: translateY(-2px); }
+.back-to-top:active { transform: scale(0.94); }
+.back-to-top svg { stroke: var(--accent1); width: 14px; height: 14px; flex-shrink: 0; }
 
 /* ── FOOTER ── */
 .footer-bar {
@@ -1380,18 +1372,16 @@ document.addEventListener('keydown', e => {
   </div>
   <div class="footer-right">
     <div class="footer-status"><span class="live-dot"></span> System status: <strong>Operational</strong></div>
-    <div class="footer-synced" id="footerSynced">Synced just now</div>
+    <button class="back-to-top" id="backToTopBtn" title="Back to top" aria-label="Back to top">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V5M5 12l7-7 7 7"/>
+      </svg>
+      <span>Back to top</span>
+    </button>
   </div>
 </footer>
 
 </div><!-- /wrap -->
-
-<!-- BACK TO TOP -->
-<button class="back-to-top" id="backToTopBtn" title="Back to top" aria-label="Back to top">
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 19V5M5 12l7-7 7 7"/>
-  </svg>
-</button>
 
 
 <!-- TOAST -->
@@ -1701,8 +1691,6 @@ function listenForLastUpdated(uid){
     if(data && data.updatedAt){
       const label=formatLastUpdated(data.updatedAt);
       document.getElementById('lastUpdated').textContent=label;
-      const footerSynced=document.getElementById('footerSynced');
-      if(footerSynced) footerSynced.textContent=label.replace('Last changed','Synced');
     }
   }, err=>console.warn('lastUpdated listener error:',err));
 }
@@ -1816,8 +1804,6 @@ function enterPreviewMode(){
   if (!activeTab && models.length > 0) activeTab = models[0];
   document.querySelector('.wrap').classList.add('unlocked');
   document.getElementById('lastUpdated').textContent = '';
-  const footerSyncedPreview=document.getElementById('footerSynced');
-  if(footerSyncedPreview) footerSyncedPreview.textContent='Preview mode (local)';
   resetUndo();
   renderAll();
   hideLoading();
@@ -2215,6 +2201,11 @@ function restoreModel(name){
 }
 
 // ── TABS & FILTERS ────────────────────────────────────────────────────────────
+function scrollToTaskChecklist(){
+  const target=document.getElementById('taskChecklistLabel');
+  if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
 function renderTabs(){
   const bar=document.getElementById('tabBar');
   bar.innerHTML='';
@@ -2224,7 +2215,7 @@ function renderTabs(){
     const btn=document.createElement('button');
     btn.className='tab-btn'+(m===activeTab?' active':'');
     btn.textContent=m;
-    btn.onclick=()=>{activeTab=m;editingIdx=null;selectedTasks.clear();renderTabs();renderTaskList();};
+    btn.onclick=()=>{activeTab=m;editingIdx=null;selectedTasks.clear();renderTabs();renderTaskList();scrollToTaskChecklist();};
     bar.appendChild(btn);
   });
 }
@@ -3471,13 +3462,7 @@ window.addEventListener('resize',refreshStickyBarOrigin);
 
 // ── BACK TO TOP ───────────────────────────────────────────────────────────────
 const backToTopBtn=document.getElementById('backToTopBtn');
-function updateBackToTopVisibility(){
-  if(window.scrollY>400) backToTopBtn.classList.add('show');
-  else backToTopBtn.classList.remove('show');
-}
-window.addEventListener('scroll',updateBackToTopVisibility,{passive:true});
 backToTopBtn.onclick=()=>{window.scrollTo({top:0,behavior:'smooth'});};
-updateBackToTopVisibility();
 
 // ── BOOTSTRAP ─────────────────────────────────────────────────────────────────
 // Show the dashboard with seed data right away rather than waiting on
