@@ -1090,6 +1090,60 @@ kbd {
   .wrap { padding: 0 16px 40px; }
 }
 
+/* ── PHONE BREAKPOINT (≤480px): covers virtually all phones in portrait.
+   Restores button labels (hidden by the 600px rule above) but lets them
+   wrap onto multiple lines instead of overflowing, fixes the task-table
+   horizontal overflow by dropping the serial-number column and moving
+   priority/status into a second row, and repositions the toast so it's
+   full-width instead of clipped. ── */
+@media(max-width: 480px) {
+  .wrap { padding: 0 12px 32px; }
+
+  /* Header: restore labels but allow wrapping across rows instead of
+     a single overflowing line. */
+  .header-right { width: 100%; flex-basis: 100%; }
+  .hdr-btn span { display: inline; }
+  .hdr-btn { padding: 7px 12px; font-size: 11.5px; }
+  .search-box { width: 100%; }
+
+  /* Tab-bar action buttons (Set Deadline / Export / Import / Archive /
+     Delete) — same .hdr-btn class, restore labels and allow wrap. */
+  .hdr-deadline-btn span,
+  #exportModelToggleBtn span,
+  #importExcelLabel span { display: inline; }
+
+  /* Task table: drop the serial-number column entirely (least essential
+     on a phone) and shrink padding so the remaining columns fit. */
+  .table-header, .task-row { padding: 0 12px; }
+  .table-header { grid-template-columns: 32px 1fr 72px; }
+  .table-header > *:nth-child(1) { display: none; } /* # column header */
+  .table-header > *:nth-child(5) { display: none; } /* status column header */
+  .task-row {
+    grid-template-columns: 32px 1fr 72px;
+    grid-template-areas:
+      "chk name prio"
+      "spacer icons actions"
+      "spacer status status";
+    row-gap: 6px;
+  }
+  .task-row > *:nth-child(1) { display: none; } /* serial number cell */
+  .task-row > *:nth-child(2) { grid-area: chk; }
+  .task-row > *:nth-child(3) { grid-area: name; }
+  .task-row > *:nth-child(4) { grid-area: prio; justify-self: end; }
+  .task-row > *:nth-child(5) { grid-area: status; justify-self: start; margin-top: 2px; }
+  .task-row > .task-icons-cell { grid-area: icons; justify-content: flex-start; }
+  .task-row > .row-actions { grid-area: actions; justify-content: flex-end; }
+  .priority-badge { width: auto; padding: 6px 10px; }
+
+  /* Toast: full-width banner instead of a fixed min-width box that can
+     clip or sit awkwardly close to the viewport edge. */
+  .toast {
+    left: 12px; right: 12px; bottom: 16px;
+    min-width: 0; width: auto;
+    padding: 14px 16px;
+  }
+}
+
 /* ── COPY PROTECTION: disable text selection/drag ── */
 html, body, * {
   -webkit-user-select: none;
@@ -1233,6 +1287,7 @@ document.addEventListener('keydown', e => {
       <span class="user-badge-caret">▾</span>
       <div class="user-menu" id="userMenu">
         <button class="menu-item" id="archiveViewBtn" title="View archived models"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><line x1="10" y1="13" x2="14" y2="13"/></svg><span>Archived</span><span class="archive-count-badge" id="archiveCountBadge" style="display:none;">0</span></button>
+        <button class="menu-item" id="userManualBtn" title="Download the user manual (PDF)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg><span>User Manual</span></button>
         <button class="menu-item" id="freshStartBtn" title="Clear everything and start fresh" style="color:var(--red);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg><span>Fresh Start</span></button>
         <button class="menu-item" id="undoBtn" title="Undo last change" style="display:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/></svg><span>Undo</span></button>
         <div class="menu-divider"></div>
@@ -1561,6 +1616,19 @@ try{
 }catch(err){
   console.warn('Firebase init failed:', err);
   window.__firebaseLoadFailed=true;
+}
+
+// ── USER MANUAL (hosted PDF link) ─────────────────────────────────────────────
+const USER_MANUAL_URL = "https://arafat93.github.io/model-launch/Model%20Launch%20Control%20-%20User%20Manual.pdf";
+
+function downloadUserManual(){
+  try{
+    window.open(USER_MANUAL_URL, '_blank');
+    toast('📘','Opening the User Manual (PDF)',false);
+  }catch(e){
+    console.error('User manual open failed:',e);
+    toast('⚠','Could not open the manual — please try again',false);
+  }
 }
 
 // ── FIREBASE AUTH UI ──────────────────────────────────────────────────────────
@@ -3649,6 +3717,11 @@ async function freshStart(){
   if(typeof refreshStickyBarOrigin==='function') setTimeout(refreshStickyBarOrigin,100);
   toast('🔄','Dashboard cleared — ready for new models & tasks',false);
 }
+
+document.getElementById('userManualBtn').onclick = ()=>{
+  document.getElementById('userBadge').classList.remove('menu-open');
+  downloadUserManual();
+};
 
 document.getElementById('freshStartBtn').onclick = ()=>{
   document.getElementById('userBadge').classList.remove('menu-open');
