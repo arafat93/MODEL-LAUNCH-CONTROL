@@ -1976,7 +1976,7 @@ function enterPreviewMode(){
   resetUndo();
   renderAll();
   hideLoading();
-  setTimeout(checkDeadlinesAndNotify,1200);
+  setTimeout(startDeadlineWatch,1200);
   if (typeof refreshStickyBarOrigin === 'function') setTimeout(refreshStickyBarOrigin, 100);
 }
 
@@ -2012,7 +2012,7 @@ refreshModelsList();
     resetUndo();
     renderAll();
     hideLoading();
-    setTimeout(checkDeadlinesAndNotify,1200);
+    setTimeout(startDeadlineWatch,1200);
     if(typeof refreshStickyBarOrigin==='function') setTimeout(refreshStickyBarOrigin,100);
   } else {
     // Signed out (or never signed in) — fall back to the local preview
@@ -2184,15 +2184,14 @@ function refreshModelsList(){models=Object.keys(state).filter(m=>!archivedModels
 // save() is defined above in the Firebase section
 
 // ── DEADLINE NOTIFICATIONS ────────────────────────────────────────────────────
-// Runs once per page load, after real data is in place (preview or signed-in).
-// Surfaces overdue tasks/models and anything due within the next 2 days,
-// via a native browser Notification when permitted, falling back to an
-// in-app toast otherwise so nothing is silently missed either way.
-let _deadlineCheckDone=false;
+// Runs shortly after real data is in place (preview or signed-in), then again
+// every hour for as long as the tab stays open, so an overdue/due-soon
+// deadline is surfaced even if you never reload the page. Surfaces overdue
+// tasks/models and anything due within the next 2 days, via a native browser
+// Notification when permitted, falling back to an in-app toast otherwise so
+// nothing is silently missed either way.
+let _deadlineCheckInterval=null;
 function checkDeadlinesAndNotify(){
-  if(_deadlineCheckDone) return;
-  _deadlineCheckDone=true;
-
   const today=new Date(); today.setHours(0,0,0,0);
   const overdueTasks=[]; const dueSoonTasks=[];
   const overdueModels=[]; const dueSoonModels=[];
@@ -2251,6 +2250,16 @@ function checkDeadlinesAndNotify(){
   } else {
     toast('⏰',summary,false);
   }
+}
+
+// Starts (or restarts) the recurring deadline check: runs once right away,
+// then every hour for as long as the tab stays open. Safe to call multiple
+// times (e.g. once from preview mode, once from signed-in mode) — any
+// previous timer is cleared first so checks never stack up.
+function startDeadlineWatch(){
+  checkDeadlinesAndNotify();
+  if(_deadlineCheckInterval) clearInterval(_deadlineCheckInterval);
+  _deadlineCheckInterval=setInterval(checkDeadlinesAndNotify, 60*60*1000);
 }
 
 // ── STATS ─────────────────────────────────────────────────────────────────────
