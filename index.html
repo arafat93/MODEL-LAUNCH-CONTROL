@@ -328,6 +328,24 @@ footer {
 .stat-num.pend-val { color: var(--red); }
 .stat-num.pct-val { color: var(--text); }
 
+/* ── MODEL CARD DRAG & DROP ── */
+.model-card { cursor: grab; }
+.model-card:active { cursor: grabbing; }
+.model-card.dragging {
+  opacity: 0.35;
+  cursor: grabbing;
+  transform: scale(0.97);
+  box-shadow: none !important;
+  border-style: dashed;
+  border-color: var(--accent1);
+}
+.model-card.drag-over {
+  border-color: var(--accent1);
+  box-shadow: 0 0 0 2px var(--accent1), var(--shadow-md) !important;
+  transform: translateY(-6px) scale(1.02);
+  background: var(--surface2);
+}
+
 /* ── ARCHIVE CARD ── */
 .model-card.archived { cursor: default; opacity: 0.85; }
 .model-card.archived::after { display: none; }
@@ -409,7 +427,7 @@ footer {
 }
 .table-header {
   display: grid;
-  grid-template-columns: 36px 56px 1fr 110px 130px 96px 160px;
+  grid-template-columns: 36px 56px 1fr 110px 130px 90px 96px 160px;
   padding: 16px 24px;
   background: var(--surface2); border-bottom: 1px solid var(--border);
   font-size: 11px; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; font-weight: 600;
@@ -438,7 +456,7 @@ footer {
 .th-sort.active.desc .sort-icon .dn { color: var(--accent1); }
 .task-row {
   display: grid;
-  grid-template-columns: 36px 56px 1fr 110px 130px 96px 160px;
+  grid-template-columns: 36px 56px 1fr 110px 130px 90px 96px 160px;
   padding: 0 24px; border-bottom: 1px solid var(--border);
   align-items: center; min-height: 64px; transition: background 0.2s;
 }
@@ -590,6 +608,36 @@ footer {
 .hdr-deadline-clear:hover { background: rgba(255,255,255,0.2); }
 
 
+/* ── TASK DEADLINE DAY-COUNT PILL ── */
+.task-dl-pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 3px 9px; border-radius: 100px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+  white-space: nowrap; flex-shrink: 0;
+  border: 1px solid transparent; min-width: 40px;
+}
+.task-dl-pill.overdue {
+  background: rgba(244, 63, 94, 0.12);
+  color: var(--red);
+  border-color: rgba(244, 63, 94, 0.25);
+}
+.task-dl-pill.due-today {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--yellow);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+.task-dl-pill.due-soon {
+  background: rgba(96, 165, 250, 0.1);
+  color: var(--accent2);
+  border-color: rgba(96, 165, 250, 0.2);
+}
+.task-dl-pill.due-done {
+  background: rgba(16, 185, 129, 0.08);
+  color: var(--green);
+  border-color: rgba(16, 185, 129, 0.18);
+  font-weight: 500;
+}
+
 /* status chip */
 .status-chip {
   display: inline-flex; align-items: center; gap: 8px;
@@ -715,6 +763,25 @@ footer {
 }
 .bulk-btn:hover { color: var(--text); border-color: var(--border-hover); background: var(--surface3); }
 .bulk-btn.danger:hover { color: var(--bg); border-color: var(--red); background: var(--red); }
+.bulk-btn.bulk-btn-deadline { color: var(--accent2); border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.07); }
+.bulk-btn.bulk-btn-deadline:hover { background: rgba(96,165,250,0.14); border-color: var(--accent2); color: var(--accent2); }
+.bulk-btn.bulk-btn-priority { color: var(--yellow); border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.07); }
+.bulk-btn.bulk-btn-priority:hover { background: rgba(245,158,11,0.14); border-color: var(--yellow); color: var(--yellow); }
+
+/* Bulk priority picker buttons */
+.bulk-prio-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 16px 12px; border-radius: 12px; border: 2px solid transparent;
+  font-family: inherit; font-size: 14px; font-weight: 700; letter-spacing: 0.5px;
+  cursor: pointer; transition: all 0.2s ease; text-transform: uppercase;
+}
+.bulk-prio-btn.prio-high { background: rgba(244,63,94,0.1); color: var(--red); border-color: rgba(244,63,94,0.25); }
+.bulk-prio-btn.prio-high:hover { background: rgba(244,63,94,0.2); border-color: var(--red); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(244,63,94,0.2); }
+.bulk-prio-btn.prio-med { background: rgba(245,158,11,0.1); color: var(--yellow); border-color: rgba(245,158,11,0.25); }
+.bulk-prio-btn.prio-med:hover { background: rgba(245,158,11,0.2); border-color: var(--yellow); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(245,158,11,0.2); }
+.bulk-prio-btn.prio-low { background: rgba(16,185,129,0.1); color: var(--green); border-color: rgba(16,185,129,0.25); }
+.bulk-prio-btn.prio-low:hover { background: rgba(16,185,129,0.2); border-color: var(--green); transform: translateY(-2px); box-shadow: 0 6px 18px rgba(16,185,129,0.2); }
+.bulk-prio-icon { font-size: 12px; }
 .task-checkbox {
   -webkit-appearance: none; -moz-appearance: none; appearance: none;
   width: 19px; height: 19px; min-width: 19px; cursor: pointer;
@@ -1057,13 +1124,13 @@ kbd {
 
 /* ── RESPONSIVE ── */
 @media(max-width: 1200px) {
-  .table-header, .task-row { grid-template-columns: 30px 48px 1fr 100px 120px 80px 150px; }
+  .table-header, .task-row { grid-template-columns: 30px 48px 1fr 100px 120px 80px 80px 150px; }
 }
 @media(max-width: 900px) {
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .models-grid { grid-template-columns: 1fr; }
   .table-header { grid-template-columns: 26px 40px 1fr 100px 110px; }
-  .table-header > *:nth-child(6), .table-header > *:nth-child(7) { display: none; }
+  .table-header > *:nth-child(6), .table-header > *:nth-child(7), .table-header > *:nth-child(8) { display: none; }
   .task-row {
     grid-template-columns: 26px 40px 1fr 100px 110px;
     grid-template-rows: auto auto;
@@ -1077,6 +1144,7 @@ kbd {
   .task-row > *:nth-child(3) { grid-area: name; }
   .task-row > *:nth-child(4) { grid-area: prio; }
   .task-row > *:nth-child(5) { grid-area: status; }
+  .task-row > *:nth-child(6) { display: none; } /* Due column */
   .task-row > .task-icons-cell { grid-area: icons; justify-content: flex-start; }
   .task-row > .row-actions { grid-area: actions; justify-content: flex-end; }
   .compare-header, .compare-row { grid-template-columns: 40px 1fr 140px; }
@@ -1204,7 +1272,7 @@ img { -webkit-user-drag: none; }
 <script>
 // ── COPY PROTECTION (deters casual copying — not a real security measure) ──
 document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('dragstart', e => e.preventDefault());
+document.addEventListener('dragstart', e => { if (!e.target.closest('[draggable="true"]')) e.preventDefault(); });
 document.addEventListener('keydown', e => {
   const k = e.key.toUpperCase();
   // View source
@@ -1397,6 +1465,8 @@ document.addEventListener('keydown', e => {
   <span class="bulk-count" id="bulkCount">0 selected</span>
   <button class="bulk-btn" id="bulkDoneBtn">Mark Done</button>
   <button class="bulk-btn" id="bulkPendingBtn">Mark Pending</button>
+  <button class="bulk-btn bulk-btn-deadline" id="bulkSetDeadlineBtn">📅 Set Deadline</button>
+  <button class="bulk-btn bulk-btn-priority" id="bulkSetPriorityBtn">⚑ Set Priority</button>
   <button class="bulk-btn" id="bulkMoveTopBtn" title="Move selected tasks to the top of the list">↑ Move to Top</button>
   <button class="bulk-btn" id="bulkMoveBottomBtn" title="Move selected tasks to the bottom of the list">↓ Move to Bottom</button>
   <button class="bulk-btn danger" id="bulkDeleteBtn">Delete Selected</button>
@@ -1421,6 +1491,7 @@ document.addEventListener('keydown', e => {
     <div class="th-sort" data-sort="name" title="Sort by task name">Task Description <span class="sort-icon"><svg class="up" width="8" height="6" viewBox="0 0 8 6"><path d="M4 0L8 6H0Z" fill="currentColor"/></svg><svg class="dn" width="8" height="6" viewBox="0 0 8 6"><path d="M4 6L0 0H8Z" fill="currentColor"/></svg></span></div>
     <div class="th-sort" data-sort="priority" title="Sort by priority">Priority <span class="sort-icon"><svg class="up" width="8" height="6" viewBox="0 0 8 6"><path d="M4 0L8 6H0Z" fill="currentColor"/></svg><svg class="dn" width="8" height="6" viewBox="0 0 8 6"><path d="M4 6L0 0H8Z" fill="currentColor"/></svg></span></div>
     <div style="justify-content:center;">Status</div>
+    <div style="justify-content:center;">Due</div>
     <div style="justify-content:center;">Notes</div>
     <div style="justify-content:center;">Actions</div>
   </div>
@@ -1566,6 +1637,42 @@ document.addEventListener('keydown', e => {
       <button class="modal-btn secondary" id="modelDeadlineClearBtn">Clear Date</button>
       <button class="modal-btn secondary" id="modelDeadlineCancelBtn">Cancel</button>
       <button class="modal-btn primary" id="modelDeadlineSaveBtn">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULK DEADLINE MODAL -->
+<div class="modal-overlay" id="bulkDeadlineModal">
+  <div class="modal-box">
+    <div class="modal-title">Set Deadline for Selected Tasks</div>
+    <div class="modal-subtitle" id="bulkDeadlineSubtitle"></div>
+    <input type="date" class="deadline-input" id="bulkDeadlinePicker" style="margin-top:4px;">
+    <div class="modal-actions" style="margin-top:24px;">
+      <button class="modal-btn secondary" id="bulkDeadlineClearBtn">Clear Dates</button>
+      <button class="modal-btn secondary" id="bulkDeadlineCancelBtn">Cancel</button>
+      <button class="modal-btn primary" id="bulkDeadlineSaveBtn">Apply to Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- BULK PRIORITY MODAL -->
+<div class="modal-overlay" id="bulkPriorityModal">
+  <div class="modal-box">
+    <div class="modal-title">Set Priority for Selected Tasks</div>
+    <div class="modal-subtitle" id="bulkPrioritySubtitle"></div>
+    <div class="bulk-priority-options" style="display:flex;gap:12px;margin-top:20px;">
+      <button class="bulk-prio-btn prio-high" id="bulkPrioHigh">
+        <span class="bulk-prio-icon">▲</span> High
+      </button>
+      <button class="bulk-prio-btn prio-med" id="bulkPrioMed">
+        <span class="bulk-prio-icon">●</span> Medium
+      </button>
+      <button class="bulk-prio-btn prio-low" id="bulkPrioLow">
+        <span class="bulk-prio-icon">▼</span> Low
+      </button>
+    </div>
+    <div class="modal-actions" style="margin-top:24px;">
+      <button class="modal-btn secondary" id="bulkPriorityCancelBtn">Cancel</button>
     </div>
   </div>
 </div>
@@ -1878,6 +1985,7 @@ function save(){
         deadlines,
         deletedModels:[...deletedModelsSet],
         archivedModels:[...archivedModelsSet],
+        modelOrder:[...modelOrder],
         updatedAt:firebase.firestore.FieldValue.serverTimestamp()
       });
       // lastUpdated label is refreshed automatically by the live Firestore
@@ -1938,7 +2046,7 @@ function undo(){
     saveTimer=setTimeout(async()=>{
       try{
         await getUserDoc(auth.currentUser.uid).set({
-          tasks:state,deadlines,deletedModels:[...deletedModelsSet],archivedModels:[...archivedModelsSet],
+          tasks:state,deadlines,deletedModels:[...deletedModelsSet],archivedModels:[...archivedModelsSet],modelOrder:[...modelOrder],
           updatedAt:firebase.firestore.FieldValue.serverTimestamp()
         });
       }catch(e){ console.error('Save error:',e); toast('⚠','Failed to save data',false);}
@@ -2002,9 +2110,10 @@ async function handleAuthState(user){
     const saved=await loadFromFirestore(user.uid);
     deletedModelsSet=new Set(saved?.deletedModels||[]);
     archivedModelsSet=new Set(saved?.archivedModels||[]);
+    modelOrder=saved?.modelOrder||[];
     setArchiveView(false);
     ({tasks: state, deadlines}=loadState(saved));
-refreshModelsList();
+    refreshModelsList();
     if (!activeTab && models.length > 0) activeTab = models[0];
     document.querySelector('.wrap').classList.add('unlocked');
     document.getElementById('lastUpdated').textContent=formatLastUpdated(saved&&saved.updatedAt)||'';
@@ -2176,11 +2285,20 @@ let searchQuery = '';
 let editingIdx = null;
 let selectedTasks = new Set();
 let dragSrcIdx = null;
+let modelOrder = []; // persisted drag-and-drop order for model cards
+let renamingModel = null; // model name currently being renamed inline
 // Tracks which models currently have their "Completed" section expanded.
 // Collapsed by default — clicking the divider toggles it per model.
 let expandedCompletedSet = new Set();
 
-function refreshModelsList(){models=Object.keys(state).filter(m=>!archivedModelsSet.has(m));}
+function refreshModelsList(){
+  const active=Object.keys(state).filter(m=>!archivedModelsSet.has(m));
+  // Merge saved order with current active models
+  const ordered=modelOrder.filter(m=>active.includes(m));
+  const unordered=active.filter(m=>!ordered.includes(m));
+  models=[...ordered,...unordered];
+  modelOrder=[...models]; // keep in sync
+}
 // save() is defined above in the Firebase section
 
 // ── DEADLINE NOTIFICATIONS ────────────────────────────────────────────────────
@@ -2325,6 +2443,8 @@ function renderKPIs(){
 }
 
 // ── MODEL CARDS ───────────────────────────────────────────────────────────────
+let _cardDragSrc = null; // model name being dragged
+
 function renderModelCards(){
   const grid=document.getElementById('modelsGrid');
   grid.innerHTML='';
@@ -2333,13 +2453,28 @@ function renderModelCards(){
     const[lbl]=statusLabel(s.pct);
     const card=document.createElement('div');
     card.className='model-card theme-'+(idx%4);
+    card.draggable=true;
+    card.dataset.model=m;
     const dl=deadlineLabel(m);
     const dlHtml=dl?`<div class="model-deadline ${dl.cls}">${CAL_ICON} ${dl.text}</div>`
       :`<div class="model-deadline">${CAL_ICON} No deadline set</div>`;
+
+    const isRenaming=renamingModel===m;
+    const nameHtml=isRenaming
+      ?`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+          <input class="task-name-edit model-rename-input" type="text" value="${m.replace(/"/g,'&quot;')}" style="font-size:16px;font-weight:600;padding:6px 10px;" maxlength="80">
+          <button class="row-action-btn save model-rename-save" title="Save" style="flex-shrink:0;">✓</button>
+          <button class="row-action-btn cancel model-rename-cancel" title="Cancel" style="flex-shrink:0;">✕</button>
+        </div>`
+      :`<div style="display:flex;align-items:center;gap:8px;">
+          <div class="model-name">${m}</div>
+          <button class="row-action-btn edit model-rename-btn" title="Rename model" style="width:26px;height:26px;font-size:13px;opacity:0;transition:opacity 0.2s;" data-model="${m}">✎</button>
+        </div>`;
+
     card.innerHTML=`
       <div class="model-header">
-        <div>
-          <div class="model-name">${m}</div>
+        <div style="min-width:0;flex:1;">
+          ${nameHtml}
           ${dlHtml}
         </div>
         <div class="model-tag">${lbl}</div>
@@ -2353,13 +2488,93 @@ function renderModelCards(){
         <div class="stat-item"><div class="stat-num pend-val">${s.pending}</div><div class="stat-lbl">PENDING</div></div>
         <div class="stat-item"><div class="stat-num" style="color:var(--text-muted)">${s.total}</div><div class="stat-lbl">TOTAL</div></div>
       </div>`;
-    card.onclick=()=>{
+
+    // Show/hide rename pencil on hover
+    card.addEventListener('mouseenter',()=>{
+      const btn=card.querySelector('.model-rename-btn');
+      if(btn) btn.style.opacity='1';
+    });
+    card.addEventListener('mouseleave',()=>{
+      const btn=card.querySelector('.model-rename-btn');
+      if(btn) btn.style.opacity='0';
+    });
+
+    // Rename button click
+    const renameBtn=card.querySelector('.model-rename-btn');
+    if(renameBtn){
+      renameBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        renamingModel=m;
+        renderModelCards();
+      });
+    }
+
+    // Rename input handlers
+    if(isRenaming){
+      const input=card.querySelector('.model-rename-input');
+      const commit=()=>{ renamingModel=null; renameModel(m,input.value); };
+      const cancel=()=>{ renamingModel=null; renderModelCards(); };
+      card.querySelector('.model-rename-save').addEventListener('click',e=>{e.stopPropagation();commit();});
+      card.querySelector('.model-rename-cancel').addEventListener('click',e=>{e.stopPropagation();cancel();});
+      input.addEventListener('keydown',e=>{
+        if(e.key==='Enter'){e.preventDefault();commit();}
+        if(e.key==='Escape'){e.preventDefault();cancel();}
+      });
+      input.addEventListener('click',e=>e.stopPropagation());
+      setTimeout(()=>{input.focus();input.select();},50);
+    }
+
+    // ── Click to navigate (only if not a drag and not renaming) ──
+    let _didDrag=false;
+    card.addEventListener('mousedown',()=>{ _didDrag=false; });
+    card.addEventListener('dragstart',()=>{ _didDrag=true; });
+    card.addEventListener('click',()=>{
+      if(_didDrag||isRenaming){ _didDrag=false; return; }
       activeTab=m;editingIdx=null;selectedTasks.clear();renderAll();
       const target=document.getElementById('taskChecklistLabel');
       if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
-    };
+    });
+
+    // ── Drag & Drop ──
+    card.addEventListener('dragstart',e=>{
+      if(isRenaming){ e.preventDefault(); return; }
+      _cardDragSrc=m;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+      e.dataTransfer.setData('text/plain',m);
+    });
+    card.addEventListener('dragend',()=>{
+      card.classList.remove('dragging');
+      document.querySelectorAll('.model-card.drag-over').forEach(c=>c.classList.remove('drag-over'));
+    });
+    card.addEventListener('dragover',e=>{
+      e.preventDefault();
+      e.dataTransfer.dropEffect='move';
+      if(_cardDragSrc && _cardDragSrc!==m) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave',()=>{ card.classList.remove('drag-over'); });
+    card.addEventListener('drop',e=>{
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if(!_cardDragSrc || _cardDragSrc===m) return;
+      // Swap positions in models array
+      const fromIdx=models.indexOf(_cardDragSrc);
+      const toIdx=models.indexOf(m);
+      if(fromIdx<0||toIdx<0) return;
+      models.splice(fromIdx,1);
+      models.splice(toIdx,0,_cardDragSrc);
+      modelOrder=[...models];
+      _cardDragSrc=null;
+      renderModelCards(); // re-render cards in new order
+      // Animate progress bars
+      document.querySelectorAll('.progress-bar-fill').forEach((bar,i)=>{
+        const pct=bar.dataset.pct;
+        setTimeout(()=>{ bar.style.width=pct+'%'; },100+i*80);
+      });
+    });
+
     grid.appendChild(card);
-    setTimeout(()=>{card.querySelector('.progress-bar-fill').style.width=s.pct+'%';},100+idx*80);
+    setTimeout(()=>{ card.querySelector('.progress-bar-fill').style.width=s.pct+'%'; },100+idx*80);
   });
 }
 
@@ -2727,12 +2942,30 @@ function renderTaskList(){
     const dlIconCls=tdl?tdl.cls:'';
     const dlTitle=tdl?`Deadline: ${tdl.text}`:'Set task deadline';
 
+    // Due column cell — day count badge for pending tasks
+    let dueCellHtml='<div style="display:flex;justify-content:center;align-items:center;">—</div>';
+    if(task.taskDeadline){
+      const today=new Date(); today.setHours(0,0,0,0);
+      const d=new Date(task.taskDeadline+'T00:00:00');
+      const diff=Math.round((d-today)/(1000*60*60*24));
+      if(showAsDone){
+        dueCellHtml=`<div style="display:flex;justify-content:center;align-items:center;"><span class="task-dl-pill due-done" title="Completed · deadline was ${task.taskDeadline}">Done</span></div>`;
+      } else if(diff<0){
+        dueCellHtml=`<div style="display:flex;justify-content:center;align-items:center;"><span class="task-dl-pill overdue" title="Overdue by ${-diff} day${-diff===1?'':'s'}">-${-diff}d</span></div>`;
+      } else if(diff===0){
+        dueCellHtml=`<div style="display:flex;justify-content:center;align-items:center;"><span class="task-dl-pill due-today" title="Due today">Today</span></div>`;
+      } else {
+        dueCellHtml=`<div style="display:flex;justify-content:center;align-items:center;"><span class="task-dl-pill due-soon" title="Due in ${diff} day${diff===1?'':'s'}">${diff}d</span></div>`;
+      }
+    }
+
     row.innerHTML=`
       <div class="task-sn">${task.sn}</div>
       <div><input type="checkbox" class="task-checkbox row-chk" ${checked?'checked':''}></div>
       ${nameCell}
       <div><button class="priority-badge ${prioClass[task.priority||'med']}" data-idx="${idx}">${prioMap[task.priority||'med']}</button></div>
-      <div><button class="status-chip ${showAsDone?'done':'pending'}" data-idx="${idx}"><span class="chip-dot"></span>${showAsDone?'Done':'Pending'}</button></div>
+      <div style="display:flex;align-items:center;justify-content:center;"><button class="status-chip ${showAsDone?'done':'pending'}" data-idx="${idx}"><span class="chip-dot"></span>${showAsDone?'Done':'Pending'}</button></div>
+      ${dueCellHtml}
       <div class="task-icons-cell">
         <div class="notes-indicator ${task.notes?'has-note':''}" data-idx="${idx}" title="${task.notes?'View/edit note':'Add note'}">📝</div>
         <div class="task-deadline-wrap ${dlIconCls}" data-idx="${idx}" title="${dlTitle}">
@@ -3089,6 +3322,26 @@ async function deleteModel(name){
   toast('×',`Model deleted: ${name}`);
 }
 
+async function renameModel(oldName, newName){
+  const trimmed=newName.trim();
+  if(!trimmed||trimmed.toUpperCase()===oldName.toUpperCase()){renderModelCards();renderTabs();return;}
+  const key=trimmed.toUpperCase();
+  if(Object.keys(state).some(m=>m!==oldName&&m.toUpperCase()===key)){
+    await showAlert({title:'Name already taken',message:`A model named "${trimmed}" already exists.`,tone:'warn'});
+    renderModelCards();renderTabs();return;
+  }
+  // Migrate state, deadlines, model order
+  state[trimmed]=state[oldName]; delete state[oldName];
+  if(deadlines[oldName]){ deadlines[trimmed]=deadlines[oldName]; delete deadlines[oldName]; }
+  if(archivedModelsSet.has(oldName)){ archivedModelsSet.delete(oldName); archivedModelsSet.add(trimmed); }
+  if(deletedModelsSet.has(oldName)){ deletedModelsSet.delete(oldName); }
+  const oi=modelOrder.indexOf(oldName); if(oi>=0) modelOrder[oi]=trimmed;
+  refreshModelsList();
+  if(activeTab===oldName) activeTab=trimmed;
+  save(); renderAll();
+  toast('✎',`Renamed: ${oldName.slice(0,20)} → ${trimmed.slice(0,20)}`);
+}
+
 // ── NOTES & DEADLINE MODALS ───────────────────────────────────────────────────
 let notesCtx={model:null,idx:null};
 function openNotesModal(model,idx){
@@ -3246,6 +3499,66 @@ document.getElementById('bulkDeleteBtn').onclick=async()=>{
   toast('×',`Deleted ${n} tasks`);
 };
 document.getElementById('bulkClearBtn').onclick=()=>{selectedTasks.clear();updateBulkBar();renderTaskList();};
+
+// ── BULK SET DEADLINE ─────────────────────────────────────────────────────────
+document.getElementById('bulkSetDeadlineBtn').onclick=()=>{
+  const n=selectedTasks.size;
+  if(!n) return;
+  document.getElementById('bulkDeadlineSubtitle').textContent=
+    `${n} task${n===1?'':'s'} selected — pick a date to apply to all of them`;
+  // Pre-fill with the common deadline if all selected tasks share one
+  const dates=[...selectedTasks].map(i=>(state[activeTab][i]||{}).taskDeadline||'');
+  const common=dates.every(d=>d===dates[0])?dates[0]:'';
+  const picker=document.getElementById('bulkDeadlinePicker');
+  picker.value=common;
+  document.getElementById('bulkDeadlineModal').classList.add('open');
+  setTimeout(()=>{ try{ if(picker.showPicker) picker.showPicker(); else picker.focus(); }catch(e){ picker.focus(); } },320);
+};
+document.getElementById('bulkDeadlineSaveBtn').onclick=()=>{
+  const val=document.getElementById('bulkDeadlinePicker').value;
+  const n=selectedTasks.size;
+  selectedTasks.forEach(i=>{ if(state[activeTab][i]) state[activeTab][i].taskDeadline=val; });
+  save(); renderAll();
+  document.getElementById('bulkDeadlineModal').classList.remove('open');
+  toast(CAL_ICON, val ? `Deadline set for ${n} task${n===1?'':'s'}` : `Deadline cleared for ${n} task${n===1?'':'s'}`);
+};
+document.getElementById('bulkDeadlineClearBtn').onclick=()=>{
+  const n=selectedTasks.size;
+  selectedTasks.forEach(i=>{ if(state[activeTab][i]) state[activeTab][i].taskDeadline=''; });
+  save(); renderAll();
+  document.getElementById('bulkDeadlineModal').classList.remove('open');
+  toast(CAL_ICON,`Deadline cleared for ${n} task${n===1?'':'s'}`);
+};
+document.getElementById('bulkDeadlineCancelBtn').onclick=()=>document.getElementById('bulkDeadlineModal').classList.remove('open');
+document.getElementById('bulkDeadlineModal').onclick=e=>{
+  if(e.target===document.getElementById('bulkDeadlineModal'))
+    document.getElementById('bulkDeadlineModal').classList.remove('open');
+};
+
+// ── BULK SET PRIORITY ─────────────────────────────────────────────────────────
+document.getElementById('bulkSetPriorityBtn').onclick=()=>{
+  const n=selectedTasks.size;
+  if(!n) return;
+  document.getElementById('bulkPrioritySubtitle').textContent=
+    `${n} task${n===1?'':'s'} selected — choose a priority to apply to all of them`;
+  document.getElementById('bulkPriorityModal').classList.add('open');
+};
+function applyBulkPriority(level){
+  const n=selectedTasks.size;
+  selectedTasks.forEach(i=>{ if(state[activeTab][i]) state[activeTab][i].priority=level; });
+  save(); renderAll();
+  document.getElementById('bulkPriorityModal').classList.remove('open');
+  const label={high:'High',med:'Medium',low:'Low'}[level];
+  toast('⚑',`Priority set to ${label} for ${n} task${n===1?'':'s'}`);
+}
+document.getElementById('bulkPrioHigh').onclick=()=>applyBulkPriority('high');
+document.getElementById('bulkPrioMed').onclick=()=>applyBulkPriority('med');
+document.getElementById('bulkPrioLow').onclick=()=>applyBulkPriority('low');
+document.getElementById('bulkPriorityCancelBtn').onclick=()=>document.getElementById('bulkPriorityModal').classList.remove('open');
+document.getElementById('bulkPriorityModal').onclick=e=>{
+  if(e.target===document.getElementById('bulkPriorityModal'))
+    document.getElementById('bulkPriorityModal').classList.remove('open');
+};
 document.getElementById('selectAllChk').onchange=e=>{
   const tasks=state[activeTab];
   if(e.target.checked)tasks.forEach((_,i)=>{if(matchesFilter(tasks[i]))selectedTasks.add(i);});
@@ -3701,6 +4014,7 @@ async function freshStart(){
   deadlines = {};
   deletedModelsSet = new Set();
   archivedModelsSet = new Set();
+  modelOrder = [];
   activeTab = '';
   selectedTasks.clear();
   editingIdx = null;
@@ -3717,6 +4031,7 @@ async function freshStart(){
         deadlines: {},
         deletedModels: [],
         archivedModels: [],
+        modelOrder: [],
         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     } catch(e){ console.error('Fresh start save error:',e); }
