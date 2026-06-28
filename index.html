@@ -345,6 +345,8 @@ header {
 .logo-group { display: flex; align-items: center; gap: 18px; min-width: 0; flex: 1 1 auto; max-width: 420px; }
 .logo-group > div:last-child { min-width: 0; }
 .logo-group h1, .logo-group div[style] { overflow: hidden; text-overflow: ellipsis; }
+#logoEditBtn { opacity: 0; visibility: hidden; transition: opacity 0.15s ease; }
+.logo-group:hover #logoEditBtn { opacity: 1; visibility: visible; }
 .logo-icon {
   width: 48px; height: 48px;
   background: linear-gradient(135deg, var(--surface2), var(--surface3));
@@ -1992,10 +1994,36 @@ document.addEventListener('keydown', e => {
         <path d="M21 3L13.5 21l-2.2-7.3L4 11.5 21 3z"/>
       </svg>
     </div>
-    <div>
-      <h1>Model <span>Launch</span> Control</h1>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <h1 id="logoTitle">Model <span id="logoAccent">Launch</span> Control</h1>
+      <button id="logoEditBtn" title="Edit title" onclick="event.stopPropagation();(function(){var modal=document.getElementById('logoEditModal');var accentEl=document.getElementById('logoAccent');var titleEl=document.getElementById('logoTitle');var parts=titleEl.textContent.trim().split(/\s+/);document.getElementById('editWord1').value=parts[0]||'Model';document.getElementById('editWord2').value=accentEl?accentEl.textContent.trim():(parts[1]||'Launch');document.getElementById('editWord3').value=parts[parts.length-1]||'Control';modal.style.display='flex';})();" style="background:none;border:1px solid var(--border);border-radius:7px;padding:4px 7px;cursor:pointer;color:var(--text-muted);display:flex;align-items:center;flex-shrink:0;transition:all 0.2s ease;" onmouseover="this.style.borderColor='var(--accent1)';this.style.color='var(--accent1)';" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)';">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      </button>
     </div>
   </div>
+  <!-- Edit Logo Modal -->
+  <div id="logoEditModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;width:380px;box-shadow:var(--shadow-md);font-family:'Sora',sans-serif;">
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:24px;">✏️ Edit Header Logo</div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">First Word</label>
+        <input id="editWord1" type="text" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:14px;outline:none;" placeholder="Model">
+      </div>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">Accent Word <span style="color:var(--accent1);">(highlighted)</span></label>
+        <input id="editWord2" type="text" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--accent1);font-family:inherit;font-size:14px;outline:none;" placeholder="Launch">
+      </div>
+      <div style="margin-bottom:24px;">
+        <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:8px;">Last Word</label>
+        <input id="editWord3" type="text" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:inherit;font-size:14px;outline:none;" placeholder="Control">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button id="logoEditCancel" style="padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-family:inherit;font-size:13px;cursor:pointer;">Cancel</button>
+        <button id="logoEditSave" style="padding:10px 20px;border-radius:10px;border:none;background:var(--accent1);color:var(--bg);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;">Save</button>
+      </div>
+    </div>
+  </div>
+
   <div class="header-right">
     <div class="live-badge" id="liveBadge" title="Return to live dashboard"><span class="live-dot"></span>LIVE</div>
     <div class="last-updated" id="lastUpdated"></div>
@@ -3744,7 +3772,26 @@ document.getElementById('archiveViewBtn').onclick=()=>{
   setArchiveView(!archiveViewActive);
 };
 document.getElementById('liveBadge').onclick=()=>{ setArchiveView(false); setRecycleView(false); };
-document.getElementById('logoHomeBtn').onclick=()=>{ window.location.reload(); };
+// ── LOGO EDIT ────────────────────────────────────────────────────────────────
+(function(){
+  var modal  = document.getElementById('logoEditModal');
+  var titleEl= document.getElementById('logoTitle');
+
+  document.getElementById('logoHomeBtn').onclick=()=>{ window.location.reload(); };
+
+  document.getElementById('logoEditSave').onclick=function(){
+    var w1=document.getElementById('editWord1').value.trim()||'Model';
+    var w2=document.getElementById('editWord2').value.trim()||'Launch';
+    var w3=document.getElementById('editWord3').value.trim()||'Control';
+    titleEl.innerHTML=w1+' <span id="logoAccent" style="color:var(--accent1);font-weight:400;">'+w2+'</span> '+w3;
+    document.title=w1+' '+w2+' '+w3;
+    modal.style.display='none';
+  };
+
+  document.getElementById('logoEditCancel').onclick=function(){ modal.style.display='none'; };
+  modal.addEventListener('click',function(e){ if(e.target===modal) modal.style.display='none'; });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&modal.style.display==='flex') modal.style.display='none'; });
+})();
 
 function renderArchiveView(){
   const grid=document.getElementById('archiveGrid');
